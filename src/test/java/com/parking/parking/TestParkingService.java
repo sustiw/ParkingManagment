@@ -14,8 +14,6 @@ public class TestParkingService {
     private ParkingSpot parkingSpot;
     @BeforeEach
     public void setUp() {
-        // FIXED: This completely resets and clears the entire parking lot infrastructure
-        // before every individual test method runs.
         parkingSpot = new ParkingSpot(15);
     }
 
@@ -157,16 +155,8 @@ public class TestParkingService {
 
         // Block the test runner until all background threads finish executing (max 5 seconds timeout)
         boolean threadsFinishedCleanly = executor.awaitTermination(5, java.util.concurrent.TimeUnit.SECONDS);
-
-        // Assert
         assertTrue(threadsFinishedCleanly, "The concurrent tasks took too long and timed out!");
 
-        // Out of 2 buses, 2 cars, and 1 motorcycle:
-        // - Motorcycle takes 1 SMALL slot (Success)
-        // - Car 1 takes 1 MEDIUM slot (Success)
-        // - Car 2 takes 1 MEDIUM slot (Success)
-        // - Bus 1 takes all 5 LARGE slots (Success)
-        // - Bus 2 finds 0 LARGE slots remaining (Fails)
         assertEquals(4, totalSuccesses.get(), "Exactly 4 vehicles should successfully secure slots");
         assertEquals(1, totalFailures.get(), "Exactly 1 vehicle (the second Bus) should be rejected");
     }
